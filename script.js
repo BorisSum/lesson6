@@ -2,40 +2,47 @@
 
 function guessNumber(secretNumber) {
 
-   return function gamePlay() {
-      const tryNumber = prompt('Угадай число от 1 до 100');
+   let attempts = 10;
 
-      if (tryNumber === null) {
-         alert('Игра окончена!');
-         return;
-      } else if (parseInt(tryNumber) > secretNumber) {
-         alert('Загаданное число меньше');
-         gamePlay();
-      } else if (parseInt(tryNumber) < secretNumber) {
-         alert('Загаданное число больше');
-         gamePlay();
-      } else if (isNaN(parseInt(tryNumber))) {
-         alert('Введите число');
-         gamePlay();
-      } else if (parseInt(tryNumber) === secretNumber) {
-         alert('Поздравляю, Вы угадали!!!');
-         return;
+   return function gamePlay() {
+      if (attempts === 0) {
+         if (confirm('Попытки закончились :(  Хотите сыграть еще?')) {
+            attempts = 10;
+            secretNumber = Math.round(Math.random() * (100 - 1) + 1);
+            gamePlay();
+         } else {
+            return;
+         }
+      } else {
+         const tryNumber = prompt(`Угадай число от 1 до 100. Осталось попыток: ${attempts}`);
+         if (tryNumber === null) {
+            alert('Игра окончена!');
+            return;
+         } else if (parseInt(tryNumber) > secretNumber) {
+            attempts--;
+            alert(`Загаданное число меньше. Осталось попыток: ${attempts}`);
+            gamePlay();
+         } else if (parseInt(tryNumber) < secretNumber) {
+            attempts--;
+            alert(`Загаданное число больше. Осталось попыток: ${attempts}`);
+            gamePlay();
+         } else if (isNaN(parseInt(tryNumber))) {
+            alert('Введите число');
+            gamePlay();
+         } else if (parseInt(tryNumber) === secretNumber) {
+            if (confirm('Поздравляю, Вы угадали!!!, Хотели бы сыграть еще?')) {
+               attempts = 10;
+               secretNumber = Math.round(Math.random() * (100 - 1) + 1);
+               gamePlay();
+            } else {
+               return;
+            }
+         }
       }
    };
 }
 
-let play;
-
-// --------------------------------- Кнопка игры ------------------------------------------
-const playButton = document.createElement('div');
-document.body.appendChild(playButton);
-playButton.classList.add('btn-play');
-playButton.textContent = 'Сыграем?';
-
-playButton.addEventListener('click', event => {
-   event.preventDefault();
-   play = guessNumber(Math.round(Math.random() * (100 - 1) + 1));
-   play();
-});
+let play = guessNumber(Math.round(Math.random() * (100 - 1) + 1));
+play();
 
 
